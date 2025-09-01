@@ -5,34 +5,26 @@ import android.os.Bundle
 import android.text.method.HideReturnsTransformationMethod
 import android.text.method.PasswordTransformationMethod
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.example.smartlatch.databinding.ActivityResetPasswordBinding
+import com.example.smartlatch.model.ResetPasswordModel
+import com.example.smartlatch.presenter.ResetPasswordPresenter
 import com.example.smartlatch.view.LoginActivity
+import com.example.smartlatch.view.ResetPasswordView
 
-class ResetPassword : AppCompatActivity() {
+class ResetPassword : AppCompatActivity(), ResetPasswordView {
 
     private lateinit var binding: ActivityResetPasswordBinding
-    private lateinit var email: String
+    private lateinit var presenter: ResetPasswordPresenter
     private var isPasswordVisible = false
     private var isConfirmPasswordVisible = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         binding = ActivityResetPasswordBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
-
-        // Get email from OTP screen
-        email = intent.getStringExtra("email") ?: ""
+        presenter = ResetPasswordPresenter(this, ResetPasswordModel())
 
         setupClickListeners()
         setupTogglePassword()
@@ -40,27 +32,14 @@ class ResetPassword : AppCompatActivity() {
 
     private fun setupClickListeners() {
         binding.btnConfirm.setOnClickListener {
-            val password = binding.etPassword.text.toString()
-            val confirmPassword = binding.etConfirmPassword.text.toString()
-
-            if (password.isEmpty() || confirmPassword.isEmpty()) {
-                Toast.makeText(this, "Please fill in both fields", Toast.LENGTH_SHORT).show()
-            } else if (password != confirmPassword) {
-                Toast.makeText(this, "Passwords do not match", Toast.LENGTH_SHORT).show()
-            } else {
-                // TODO: Send password reset request to backend using 'email' and 'password'
-                Toast.makeText(this, "Password reset successful for $email", Toast.LENGTH_SHORT).show()
-
-                // Navigate to PasswordChangedActivity
-                val intent = Intent(this, PasswordChangedActivity::class.java)
-                startActivity(intent)
-                finish()
-            }
+            presenter.onResetPassword(
+                binding.etPassword.text.toString(),
+                binding.etConfirmPassword.text.toString()
+            )
         }
 
         binding.backToLogin.setOnClickListener {
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
+            presenter.onBackToLogin()
         }
     }
 
@@ -80,5 +59,20 @@ class ResetPassword : AppCompatActivity() {
                 else PasswordTransformationMethod.getInstance()
             binding.etConfirmPassword.setSelection(binding.etConfirmPassword.text.length)
         }
+    }
+
+    // ===== ResetPasswordView implementation =====
+    override fun showMessage(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun navigateToPasswordChanged() {
+        startActivity(Intent(this, PasswordChangedActivity::class.java))
+        finish()
+    }
+
+    override fun navigateToLogin() {
+        startActivity(Intent(this, LoginActivity::class.java))
+        finish()
     }
 }

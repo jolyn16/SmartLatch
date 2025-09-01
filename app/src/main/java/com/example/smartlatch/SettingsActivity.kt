@@ -9,16 +9,23 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.smartlatch.databinding.ActivitySettingsBinding
+import com.example.smartlatch.model.SettingsModel
+import com.example.smartlatch.presenter.SettingsPresenter
 import com.example.smartlatch.view.LoginActivity
+import com.example.smartlatch.view.SettingsView
 
-class SettingsActivity : AppCompatActivity() {
+class SettingsActivity : AppCompatActivity(), SettingsView {
+
     private lateinit var binding: ActivitySettingsBinding
+    private lateinit var presenter: SettingsPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        presenter = SettingsPresenter(this, SettingsModel())
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.header)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -38,23 +45,23 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent(this, ChangePasswordActivity::class.java))
         }
         binding.notificationBell.setOnClickListener {
-            Toast.makeText(this, "Notifications", Toast.LENGTH_SHORT).show()
+            showMessage("Notifications")
         }
         binding.logoutButton.setOnClickListener { showLogoutConfirmation() }
     }
 
     private fun setupSwitchListeners() {
         binding.pushNotificationsSwitch.setOnCheckedChangeListener { _, isChecked ->
-            Toast.makeText(this, "Push notifications: ${if (isChecked) "ON" else "OFF"}", Toast.LENGTH_SHORT).show()
+            presenter.togglePushNotifications(isChecked)
         }
         binding.successfulEntriesSwitch.setOnCheckedChangeListener { _, isChecked ->
-            Toast.makeText(this, "Successful entries notifications: ${if (isChecked) "ON" else "OFF"}", Toast.LENGTH_SHORT).show()
+            presenter.toggleSuccessfulEntries(isChecked)
         }
         binding.failedAttemptsSwitch.setOnCheckedChangeListener { _, isChecked ->
-            Toast.makeText(this, "Failed attempts notifications: ${if (isChecked) "ON" else "OFF"}", Toast.LENGTH_SHORT).show()
+            presenter.toggleFailedAttempts(isChecked)
         }
         binding.darkModeSwitch.setOnCheckedChangeListener { _, isChecked ->
-            Toast.makeText(this, "Dark mode: ${if (isChecked) "ON" else "OFF"}", Toast.LENGTH_SHORT).show()
+            presenter.toggleDarkMode(isChecked)
         }
     }
 
@@ -62,13 +69,17 @@ class SettingsActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setTitle("Log out")
             .setMessage("Are you sure you want to log out?")
-            .setPositiveButton("Yes") { _, _ -> logout() }
+            .setPositiveButton("Yes") { _, _ -> presenter.logout() }
             .setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
             .show()
     }
 
-    private fun logout() {
-        Toast.makeText(this, "Logging out...", Toast.LENGTH_SHORT).show()
+    // --- SettingsView implementation ---
+    override fun showMessage(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun navigateToLogin() {
         val intent = Intent(this, LoginActivity::class.java)
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
