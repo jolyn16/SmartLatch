@@ -15,49 +15,49 @@
             android:name=".Notification"
             android:exported="false" />
         <activity
-            android:name=".view.LoginActivity"
+            android:name=".view.auth.LoginActivity"
             android:exported="false" />
         <activity
-            android:name=".view.RegisterActivity"
+            android:name=".view.auth.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".view.ForgotPasswordActivity"
+            android:name=".view.forgetPass.ForgotPasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".OtpVerificationActivity"
+            android:name=".view.forgetPass.OtpVerificationActivity"
             android:exported="false" />
         <activity
-            android:name=".DashboardActivity"
+            android:name=".view.dashboard.DashboardActivity"
             android:exported="false" />
         <activity
-            android:name=".PasswordChangedActivity"
+            android:name=".view.forgetPass.PasswordChangedActivity"
             android:exported="false" />
         <activity
-            android:name=".DeviceDetailsActivity"
+            android:name=".view.devices.DeviceDetailsActivity"
             android:exported="false" />
         <activity
-            android:name=".PermissionsActivity"
+            android:name=".view.devices.PermissionsActivity"
             android:exported="false" />
         <activity
-            android:name=".RequestsActivity"
+            android:name=".view.devices.RequestsActivity"
             android:exported="false" />
         <activity
-            android:name=".ProfileActivity"
+            android:name=".view.profile.ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".EditProfileActivity"
+            android:name=".view.profile.EditProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".ChangePasswordActivity"
+            android:name=".view.auth.ChangePasswordActivity"
             android:exported="false" />
         <activity
-            android:name=".PasswordChangedSuccessActivity"
+            android:name=".view.forgetPass.PasswordChangedSuccessActivity"
             android:exported="false" />
         <activity
-            android:name=".HistoryActivity"
+            android:name=".view.history.HistoryActivity"
             android:exported="false" />
         <activity
-            android:name=".SettingsActivity"
+            android:name=".view.settings.SettingsActivity"
             android:exported="false" />
         <activity
             android:name=".ResetPassword"
